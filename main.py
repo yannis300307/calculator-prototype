@@ -79,11 +79,24 @@ def eval_exp(tokens: list):
         return False
     success = eval_exp_single_opp(playground, "+-")
     if success != -1:
-        show_error(tokens, success, "Invalid token for operation `+` or `-`")
+        show_error(tokens, success, "Invalid token for operation `+` or `-`.")
         return False
     tokens.clear()
     tokens.extend(playground)
     return True
+
+
+def recursive_eval(tokens: list):
+    in_parentheses = False
+    count = 0
+    sub_expression = []
+    for i in tokens:
+        if i == "(":
+            in_parentheses = True
+        elif i == ")":
+            in_parentheses = False
+        elif in_parentheses:
+            sub_expression.append(i)
 
 
 exp_tokens = split_tokens(expression)
