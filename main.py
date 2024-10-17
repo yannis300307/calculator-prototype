@@ -44,19 +44,19 @@ def eval_exp_single_opp(tokens: list, ops):
     while i < len(tokens):
         if isinstance(tokens[i], str) and tokens[i] in ops:
             if not is_float(tokens[i-1]):
-                return original_i
+                return original_i-1
             if not is_float(tokens[i+1]):
-                return original_i
+                return original_i+1
             result = eval_simple_expression(float(tokens.pop(i-1)), tokens.pop(i-1), float(tokens.pop(i-1)))
             tokens.insert(i-1, result)
             i -= 3
             original_i += 2
         i += 1
         original_i += 1
-        print(original_i)
     return -1
 
-def show_error(tokens, index):
+
+def show_error(tokens, index, message):
     print(" ".join(tokens))
     spacing_count = 0
     for i, v in enumerate(tokens):
@@ -64,18 +64,28 @@ def show_error(tokens, index):
             break
         spacing_count += len(v) + (0 if i == 0 or i == len(tokens) - 1 else 1)
     print(" " * (spacing_count + 1) + "^"*len(tokens[index]))
+    print(message)
 
 
 def eval_exp(tokens: list):
     playground = tokens.copy()
     success = eval_exp_single_opp(playground, "^")
     if success != -1:
-        show_error(tokens, success)
-        return
+        show_error(tokens, success, "Invalid token for operation `^`.")
+        return False
     success = eval_exp_single_opp(playground, "*/")
+    if success != -1:
+        show_error(tokens, success, "Invalid token for operation `*` or `/`.")
+        return False
     success = eval_exp_single_opp(playground, "+-")
+    if success != -1:
+        show_error(tokens, success, "Invalid token for operation `+` or `-`")
+        return False
+    tokens.clear()
+    tokens.extend(playground)
+    return True
 
 
 exp_tokens = split_tokens(expression)
-eval_exp(exp_tokens)
-print(exp_tokens[0])
+if eval_exp(exp_tokens):
+    print(exp_tokens[0])
