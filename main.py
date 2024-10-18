@@ -90,15 +90,41 @@ def recursive_eval(tokens: list):
     in_parentheses = False
     count = 0
     sub_expression = []
-    for i in tokens:
-        if i == "(":
+    i = 0
+    original_i = 0
+    while i < len(tokens):
+        if tokens[i] == "(":
+            count += 1
+            tokens.pop(i)
+            i -= 1
             in_parentheses = True
-        elif i == ")":
-            in_parentheses = False
+        elif tokens[i] == ")":
+            count -= 1
+            tokens.pop(i)
+            i -= 1
+            if count == 0:
+                in_parentheses = False
+                if sub_expression:
+                    recursive_eval(sub_expression)
+                    tokens.insert(i+1, sub_expression[0])
+                    sub_expression.clear()
         elif in_parentheses:
-            sub_expression.append(i)
+            sub_expression.append(tokens.pop(i))
+            i -= 1
+        i += 1
+        original_i += 1
+
+    if count != 0:
+        return False
+
+    eval_exp(tokens)
+
+    return True
 
 
 exp_tokens = split_tokens(expression)
-if eval_exp(exp_tokens):
+success = recursive_eval(exp_tokens)
+if not success:
+    print("Non-matching parentheses!")
+else:
     print(exp_tokens[0])
