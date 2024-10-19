@@ -44,7 +44,6 @@ class TokenReader:
         self.i += 1
 
 def add_sub(reader: TokenReader) -> float:
-    global i
     first = div_mul(reader)
     while reader.current in ['+', '-']:
         if reader.current == '+':
@@ -56,7 +55,6 @@ def add_sub(reader: TokenReader) -> float:
     return first
 
 def div_mul(reader: TokenReader) -> float:
-    global i
     first = power(reader)
     while reader.current in ['*', '/']:
         if reader.current == '*':
@@ -68,7 +66,6 @@ def div_mul(reader: TokenReader) -> float:
     return first
 
 def power(reader: TokenReader) -> float:
-    global i
     first = unary(reader)
     while reader.current == '^':
         reader.next()
@@ -76,7 +73,6 @@ def power(reader: TokenReader) -> float:
     return first
 
 def unary(reader: TokenReader) -> float:
-    global i
     sign = 1
     while reader.current in ['+', '-']:
         if reader.current == '-':
@@ -85,7 +81,6 @@ def unary(reader: TokenReader) -> float:
     return item(reader) * sign
 
 def item(reader: TokenReader) -> float:
-    global i
     if reader.current == '(':
         reader.next()
         result = add_sub(reader)
